@@ -16,47 +16,41 @@
 <body>
   <header class="app-header">
     <nav>
-      <ul>
-        <li>
+      <ul  class="time-navigation-list">
+        <li class="logo">
           <a href="index.html" class="logo logo-white">
             <img src="img/icons/logo-icon-white.svg" alt="logo icon: white square and 3 red lines horizontally in it">
             <span>Todo Daily</span>
           </a>
         </li>
-        <li class="profile">
-          <span class="profile-name small-text">James</span>
-          <img class="profile-icon" src="img/guy-in-notebook.png">
-          <div class="profile-popup active">
-            <div class="menu-item">
-              <i class="fa-solid fa-user"></i>
-              <span>Profile</span>
-            </div>
-            <div class="menu-item">
-              <i class="fa-solid fa-sliders"></i>
-              <span>Settings</span>
-            </div>
-            <div class="menu-item">
-              <i class="fa-solid fa-trash-can"></i>
-              <span class="red-text">Reset Data</span>
-            </div>
-          </div>
+        <li class="nav-link small-text today">
+          <i class="fa-solid fa-calendar-day"></i>
+          <span>Today</span>
+        </li>
+        <li class="nav-link small-text yesterday">
+          <i class="fa-solid fa-calendar"></i>
+          <span>Yesterday</span>
+        </li>
+        <li class="nav-link small-text upcoming">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span>Upcoming</span>
         </li>
       </ul>
     </nav>
   </header>
   <div class="content-wrapper flex">
   <aside class="time-navigation">
-    <nav>
+    <nav class="time-nav">
       <ul  class="time-navigation-list">
-        <li class="nav-link active small-text">
+        <li class="nav-link small-text active today">
           <i class="fa-solid fa-calendar-day"></i>
           <span>Today</span>
         </li>
-        <li class="nav-link small-text">
+        <li class="nav-link small-text yesterday">
           <i class="fa-solid fa-calendar"></i>
           <span>Yesterday</span>
         </li>
-        <li class="nav-link small-text">
+        <li class="nav-link small-text upcoming">
           <i class="fa-regular fa-calendar-days"></i>
           <span>Upcoming</span>
         </li>
@@ -64,95 +58,43 @@
     </nav>
   </aside>
   <main  class="app-main">
+   <!-- Tasks menu -->
     <section class="tasks">
-      <h1 class="big-text red-text">Today</h1>
+      <h1 class="big-text red-text current-page"></h1>
+      <span class="current-time small-text"></span>
+      <div class="days">
+        <ul class="days-list">
+        </ul>
+      </div>
       <span class="completed-tasks small-text">4/6 completed</span>
       <ul class="tasks-list">
-        <li class="task">
-            <i class="fa-solid fa-circle-check complete-task-icon" title="Complete task"></i>
-          <div class="task-content">
-            <div class="task-info">
-              <p class="task-title">Cooking a salmon sushi</p>
-              <p class="task-description">Salmon and tuna i think is good for dinner, i wanna make it today :D</p>
-            </div>
-            <div class="task-interaction">
-              <i class="fa-solid fa-pen-to-square small-text"></i>
-              <i class="fa-solid fa-ellipsis small-text"></i>
-            </div>
-            <div class="ellipsis-popup active">
-              <div class="menu-item">
-                <i class="fa-solid fa-trash-can"></i>
-                <span class="red-text">Delete</span>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="task">
-          <i class="fa-solid fa-circle-check  complete-task-icon" title="Complete task"></i>
-        <div class="task-content">
-          <div class="task-info">
-            <p class="task-title">Write code for fizz buzz algorithm</p>
-            <p class="task-description">Salmon and tuna i think is good for dinner, i wanna make it today :D</p>
-          </div>
-          <div class="task-interaction">
-            <i class="fa-solid fa-pen-to-square small-text"></i>
-            <i class="fa-solid fa-ellipsis small-text"></i>
-          </div>
-          <div class="ellipsis-popup active">
-            <div class="menu-item">
-              <i class="fa-solid fa-trash-can"></i>
-              <span class="red-text">Delete</span>
-            </div>
-          </div>
-        </div></li>
-        <li class="task">
-          <i class="fa-solid fa-circle-check  complete-task-icon" title="Complete task"></i>
-        <div class="task-content">
-          <div class="task-info">
-            <p class="task-title">Build Todo Daily app</p>
-            <p class="task-description">Salmon and tuna i think is good for dinner, i wanna make it today :D</p>
-          </div>
-          <div class="task-interaction">
-            <i class="fa-solid fa-pen-to-square small-text"></i>
-            <i class="fa-solid fa-ellipsis small-text"></i>
-          </div>
-          <div class="ellipsis-popup active">
-            <div class="menu-item">
-              <i class="fa-solid fa-trash-can"></i>
-              <span class="red-text">Delete</span>
-            </div>
-          </div>
-        </div></li>
-        <li class="task">
-          <i class="fa-solid fa-circle-check complete-task-icon" title="Complete task"></i>
-        <div class="task-content">
-          <div class="task-info">
-            <p class="task-title">Design Todo Daily app</p>
-            <p class="task-description">Salmon and tuna i think is good for dinner, i wanna make it today :D</p>
-          </div>
-          <div class="task-interaction">
-            <i class="fa-solid fa-pen-to-square small-text"></i>
-            <i class="fa-solid fa-ellipsis small-text"></i>
-          </div>
-          <div class="ellipsis-popup active">
-            <div class="menu-item">
-              <i class="fa-solid fa-trash-can"></i>
-              <span class="red-text">Delete</span>
-            </div>
-          </div>
-        </div></li>
       </ul>
-      <form class="task-menu">
-        <input type="text" class="new-task-title" placeholder="Task title">
-        <textarea class="new-task-description" placeholder="Description"></textarea>
-      </form>
-      <button class="btn btn-red agree">Edit/Add</button>
-      <button class="btn btn-white decline">Cancel</button>
-      <!-- <div class="add-task">
+      <div class="task-menu-div">
+        <form class="task-menu">
+          <input type="text" class="new-task-title" placeholder="Task title">
+          <textarea class="new-task-description" placeholder="Description"></textarea>
+        </form>
+        <button class="btn btn-red agree">Edit/Add</button>
+        <button class="btn btn-white decline">Cancel</button>
+      </div>
+      <div class="add-task">
         <i class="fa-solid fa-circle-plus red-text small-text"></i>
         <span class="red-text small-text">Add task</span>
-      </div> -->
+      </div>
     </section>
+    
+   <!-- Profile Menu -->
+   <section class="profiles">
+     <img src="img/default.jpg" alt="profile image">
+     <form>
+       <label for="username">Username:</label>
+       <input type="text" placeholder="Enter your username" id="username">
+       <label for="image-url">Profile image:</label>
+       <input type="text" placeholder="Enter image url" id="image-url">
+     </form>
+     <button class="btn btn-red agree">Apply</button>
+     <button class="btn btn-white decline">Cancel</button>
+   </section>
   </main>
 </div>
 
