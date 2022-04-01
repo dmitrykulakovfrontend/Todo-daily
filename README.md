@@ -1,7 +1,7 @@
 # Todo Daily
 > This is an app to write all task of daily activity.
 
-Should be available at [GitHub Pages](https://atomeistee.github.io/Todo-app/)
+Should be available at [GitHub Pages](https://atomeistee.github.io/Todo-daily/)
 
 For idea and design thanks Dicka Ismaji and his [Figma Design](https://www.figma.com/community/file/1086950935431359417)
 
