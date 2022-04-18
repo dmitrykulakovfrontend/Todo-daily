@@ -1,12 +1,14 @@
 let editing = false;
 let completed_amount = 0;
 let creating = false;
+const yesterday = new Date(new Date() - 86400000).toDateString();
+const today = new Date().toDateString();
 let tasks_obj = {
   tasks: [],
   order: 0,
 };
 document.addEventListener("DOMContentLoaded", () => {
-  load_today_page();
+  load_day_tasks(today);
 
   const nav_links = document.querySelectorAll(
     ".time-navigation-list > .nav-link"
@@ -67,6 +69,7 @@ const toggle_active_page = (e) => {
   const nav_links = document.querySelectorAll(
     ".time-navigation-list > .nav-link"
   );
+  // get pages name
   const next_page = e.currentTarget.querySelector("span").innerText;
   const current_page = document.querySelector(".current-page").innerText;
 
@@ -74,73 +77,31 @@ const toggle_active_page = (e) => {
 
   nav_links.forEach((link) => link.classList.remove("active"));
 
-  e.currentTarget.classList.toggle("active");
+  e.currentTarget.classList.add("active");
 
-  if ((next_page === "Today") & (next_page !== current_page)) {
-    load_today_page();
-  }
   switch (next_page) {
     case "Today":
-      load_today_page();
+      load_day_tasks(today);
       break;
     case "Yesterday":
-      load_yesterday_page();
+      load_day_tasks(yesterday);
       break;
     case "Upcoming":
       load_upcoming_page();
       break;
     default:
-      load_today_page();
-      break;
+      throw new Error("something went wrong");
   }
 };
 
-const load_today_page = () => {
-  const tasks_list = document.querySelector(".tasks-list");
-  const current_page = document.querySelector(".current-page");
-  const current_time = document.querySelector(".current-time");
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const today = new Date().toDateString();
-  document.querySelector(".days").style.display = "none";
-
-  current_page.innerText = "Today";
-  current_time.innerText = today;
-  const task_obj = get_tasks(today);
-
-  tasks_list.innerHTML = "";
-  completed_amount = 0;
-
-  task_obj.tasks_info.tasks.forEach((task) => {
-    display_task(task);
-    if (task.completed) completed_amount++;
-  });
-
-  completed_tasks.innerText = `${completed_amount}/${task_obj.tasks_info.tasks.length} completed`;
-};
-
-const load_yesterday_page = () => {
-  const tasks_list = document.querySelector(".tasks-list");
-  const current_page = document.querySelector(".current-page");
-  const current_time = document.querySelector(".current-time");
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const yesterday = new Date(new Date() - 86400000).toDateString();
-  document.querySelector(".days").style.display = "none";
-
-  current_page.innerText = "Yesterday";
-  current_time.innerText = yesterday;
-  load_day_tasks(yesterday);
-};
-
 const load_upcoming_page = () => {
-  const tasks_list = document.querySelector(".tasks-list");
   const current_page = document.querySelector(".current-page");
   const current_time = document.querySelector(".current-time");
-  const completed_tasks = document.querySelector(".completed-tasks");
   const days_list = document.querySelector(".days-list");
-  const seven_days_ms = 604800000;
   const one_day_ms = 86400000;
+  const week_ms = one_day_ms * 7;
 
-  let time = new Date(new Date() - seven_days_ms);
+  let time = new Date(new Date() - week_ms);
 
   document.querySelector(".days").style.display = "block";
   days_list.innerHTML = "";
@@ -159,7 +120,6 @@ const load_upcoming_page = () => {
 
   current_page.innerText = "Upcoming";
   current_time.innerText = new Date().toDateString();
-  load_day_tasks();
 };
 
 const change_active_day = (e) => {
@@ -180,16 +140,21 @@ const change_active_day = (e) => {
 const load_day_tasks = (time) => {
   const tasks_obj = get_tasks(time);
   const tasks_list = document.querySelector(".tasks-list");
-  const current_page = document.querySelector(".current-page");
   const completed_tasks = document.querySelector(".completed-tasks");
+  const current_page = document.querySelector(".current-page");
+  const current_time = document.querySelector(".current-time");
 
   tasks_list.innerHTML = "";
+  current_page.innerText = "";
   completed_amount = 0;
+  document.querySelector(".days").style.display = "none";
 
   tasks_obj.tasks_info.tasks.forEach((task) => {
     display_task(task);
     if (task.completed) completed_amount++;
   });
+
+  current_time.innerText = time;
 
   completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
@@ -248,16 +213,17 @@ const finish_editing_form = (e) => {
   const new_task_title = document.querySelector(".new-task-title");
   const completed_tasks = document.querySelector(".completed-tasks");
   const new_task_desc = document.querySelector(".new-task-description");
+  const current_time = document.querySelector(".current-time");
   const task_id = current_task.dataset.id;
 
   if (!is_valid_task()) return;
 
-  let task_obj = get_tasks();
+  let task_obj = get_tasks(current_time.innerText);
 
   const previous_task_index = task_obj.tasks_info.tasks.findIndex(
     (task) => task.id === task_id
   );
-  const previous_task = task_obj.tasks_info.tasks[previous_task_index];
+  const previous_task = task_obj.tasks_info.tasks.find()[previous_task_index];
   const new_task = {
     title: new_task_title.value,
     desc: new_task_desc.value,
@@ -407,7 +373,7 @@ const get_tasks = (time) => {
     order: 0,
   };
 
-  if (!time) time = document.querySelector(".current-time").innerText;
+  if (!time) throw new Error("no time for getting tasks");
 
   if (localStorage.getItem(time)) {
     tasks_obj = JSON.parse(localStorage.getItem(time));
