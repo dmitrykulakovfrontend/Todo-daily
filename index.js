@@ -70,16 +70,17 @@ const toggle_active_page = (e) => {
     ".time-navigation-list > .nav-link"
   );
   // get pages name
-  const next_page = e.currentTarget.querySelector("span").innerText;
-  const current_page = document.querySelector(".current-page").innerText;
+  const next_page = e.currentTarget.querySelector("span");
+  const current_page = document.querySelector(".current-page");
 
-  if (next_page === current_page) return;
+  if (next_page.innerText === current_page.innerText) return;
 
   nav_links.forEach((link) => link.classList.remove("active"));
 
   e.currentTarget.classList.add("active");
 
-  switch (next_page) {
+  current_page.innerText = next_page.innerText;
+  switch (next_page.innerText) {
     case "Today":
       load_day_tasks(today);
       break;
@@ -144,10 +145,12 @@ const load_day_tasks = (time) => {
   const current_page = document.querySelector(".current-page");
   const current_time = document.querySelector(".current-time");
 
+  if (current_page.innerText !== "Upcoming") {
+    document.querySelector(".days").style.display = "none";
+    current_page.innerText = "";
+  }
   tasks_list.innerHTML = "";
-  current_page.innerText = "";
   completed_amount = 0;
-  document.querySelector(".days").style.display = "none";
 
   tasks_obj.tasks_info.tasks.forEach((task) => {
     display_task(task);
@@ -213,17 +216,16 @@ const finish_editing_form = (e) => {
   const new_task_title = document.querySelector(".new-task-title");
   const completed_tasks = document.querySelector(".completed-tasks");
   const new_task_desc = document.querySelector(".new-task-description");
-  const current_time = document.querySelector(".current-time");
   const task_id = current_task.dataset.id;
 
   if (!is_valid_task()) return;
 
-  let task_obj = get_tasks(current_time.innerText);
+  let task_obj = get_tasks();
 
   const previous_task_index = task_obj.tasks_info.tasks.findIndex(
     (task) => task.id === task_id
   );
-  const previous_task = task_obj.tasks_info.tasks.find()[previous_task_index];
+  const previous_task = task_obj.tasks_info.tasks[previous_task_index];
   const new_task = {
     title: new_task_title.value,
     desc: new_task_desc.value,
@@ -308,7 +310,6 @@ const complete_task = (e) => {
   task_obj.tasks_info.tasks[task_index].completed = true;
 
   localStorage.setItem(task_obj.time, JSON.stringify(task_obj.tasks_info));
-  console.log(e.currentTarget);
   e.currentTarget.remove();
 
   completed_amount++;
@@ -367,7 +368,9 @@ const display_task = (task) => {
   tasks_list.append(task_li);
 };
 
-const get_tasks = (time) => {
+const get_tasks = (
+  time = document.querySelector(".current-time").innerText
+) => {
   let tasks_obj = {
     tasks: [],
     order: 0,
