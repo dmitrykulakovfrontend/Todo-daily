@@ -81,7 +81,7 @@ const task_interaction = (e) => {
     task: e.currentTarget,
     task_id: e.currentTarget.dataset.id,
     task_index: tasks_obj.tasks_info.tasks.findIndex(
-      (task) => task.id === currentTask.task_id
+      (task) => task.id === e.currentTarget.dataset.id
     ),
   };
 
