@@ -1,12 +1,9 @@
-let editing = false;
-let completed_amount = 0;
-let creating = false;
+let isEditing = false;
+let completed_amount_tasks = 0;
+let isCreating = false;
 const yesterday = new Date(new Date() - 86400000).toDateString();
 const today = new Date().toDateString();
-let tasks_obj = {
-  tasks: [],
-  order: 0,
-};
+
 document.addEventListener("DOMContentLoaded", () => {
   load_day_tasks(today);
 
@@ -14,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ".time-navigation-list > .nav-link"
   );
   const tasks = document.querySelectorAll(".task");
+
+  // get buttons for creating new task
   const add_task_button = $(".add-task");
   const agree_creating_button = $(".tasks > .task-menu-div .agree");
   const decline_creating_button = $(".tasks > .task-menu-div .decline");
@@ -36,12 +35,6 @@ const uuid = () => Date.now().toString(36) + Math.random().toString(36);
 
 const $ = (str) => document.querySelector(str);
 
-const toggle_profile_popup = () => {
-  const profile_popup = $(".profile-popup");
-
-  profile_popup.classList.toggle("active");
-};
-
 const toggle_ellipsis_popup = (e) => {
   const popup = e.target.parentElement.parentElement.children[2];
 
@@ -52,10 +45,11 @@ const toggle_active_page = (e) => {
   const nav_links = document.querySelectorAll(
     ".time-navigation-list > .nav-link"
   );
-  // get pages name
+  // get current and clicked pages name
   const next_page = e.currentTarget.querySelector("span");
   const current_page = $(".current-page");
 
+  // if clicked same page return
   if (next_page.innerText === current_page.innerText) return;
 
   nav_links.forEach((link) => link.classList.remove("active"));
@@ -63,6 +57,7 @@ const toggle_active_page = (e) => {
   e.currentTarget.classList.add("active");
 
   current_page.innerText = next_page.innerText;
+
   switch (next_page.innerText) {
     case "Today":
       load_day_tasks(today);
@@ -80,13 +75,15 @@ const toggle_active_page = (e) => {
 
 const task_interaction = (e) => {
   const click = e.target;
-  const currentTask = {};
-  currentTask.task = e.currentTarget;
-  currentTask.task_id = currentTask.task.dataset.id;
-  currentTask.tasks_obj = get_tasks();
-  currentTask.task_index = currentTask.tasks_obj.tasks_info.tasks.findIndex(
-    (task) => task.id === currentTask.task_id
-  );
+  const tasks_obj = get_tasks();
+  const currentTask = {
+    tasks_obj: tasks_obj,
+    task: e.currentTarget,
+    task_id: e.currentTarget.dataset.id,
+    task_index: tasks_obj.tasks_info.tasks.findIndex(
+      (task) => task.id === currentTask.task_id
+    ),
+  };
 
   if (click.classList.contains("fa-ellipsis")) {
     toggle_ellipsis_popup(e);
@@ -122,6 +119,7 @@ const load_upcoming_page = () => {
   days_list.innerHTML = "";
   tasks_list.innerHTML = "";
 
+  // iterating through days and creating li-day for each
   for (let i = 0; i < 15; i++) {
     let li = document.createElement("li");
     li.classList.add("day");
@@ -167,16 +165,16 @@ const load_day_tasks = (time) => {
     current_page.innerText = "";
   }
   tasks_list.innerHTML = "";
-  completed_amount = 0;
+  completed_amount_tasks = 0;
 
   tasks_obj.tasks_info.tasks.forEach((task) => {
     display_task(task);
-    if (task.completed) completed_amount++;
+    if (task.completed) completed_amount_tasks++;
   });
 
   current_time.innerText = time;
 
-  completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
+  completed_tasks.innerText = `${completed_amount_tasks}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
 
 const activate_task_menu = () => {
@@ -188,7 +186,7 @@ const activate_task_menu = () => {
   add_task_button.style.display = "none";
   task_menu.style.display = "block";
   agree_creating_button.innerText = "Add";
-  creating = true;
+  isCreating = true;
 };
 
 const finish_task_form = () => {
@@ -215,14 +213,14 @@ const finish_task_form = () => {
 
   localStorage.setItem(task_obj.time, JSON.stringify(task_obj.tasks_info));
   display_task(task);
-  completed_tasks.innerText = `${completed_amount}/${task_obj.tasks_info.tasks.length} completed`;
+  completed_tasks.innerText = `${completed_amount_tasks}/${task_obj.tasks_info.tasks.length} completed`;
 
   add_task_button.style.display = "block";
   task_menu.style.display = "none";
 
   task_title.value = "";
   task_desc.value = "";
-  creating = false;
+  isCreating = false;
 };
 
 const finish_editing_form = (e) => {
@@ -255,11 +253,11 @@ const finish_editing_form = (e) => {
 
   localStorage.setItem(task_obj.time, JSON.stringify(task_obj.tasks_info));
   update_task(new_task);
-  completed_tasks.innerText = `${completed_amount}/${task_obj.tasks_info.tasks.length} completed`;
+  completed_tasks.innerText = `${completed_amount_tasks}/${task_obj.tasks_info.tasks.length} completed`;
 
   task_menu.remove();
 
-  editing = false;
+  isEditing = false;
 };
 
 const delete_task = ({ task, tasks_obj, task_index }) => {
@@ -270,10 +268,10 @@ const delete_task = ({ task, tasks_obj, task_index }) => {
 
   localStorage.setItem(tasks_obj.time, JSON.stringify(tasks_obj.tasks_info));
 
-  if (task.classList.contains("completed")) completed_amount--;
+  if (task.classList.contains("completed")) completed_amount_tasks--;
   task.remove();
 
-  completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
+  completed_tasks.innerText = `${completed_amount_tasks}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
 
 const edit_task = ({ task }) => {
@@ -302,7 +300,7 @@ const edit_task = ({ task }) => {
   document
     .querySelector("button.decline.edit")
     .addEventListener("click", cancel_editing);
-  editing = true;
+  isEditing = true;
 };
 
 const complete_task = ({ task, tasks_obj, task_index }) => {
@@ -312,10 +310,11 @@ const complete_task = ({ task, tasks_obj, task_index }) => {
   tasks_obj.tasks_info.tasks[task_index].completed = true;
 
   localStorage.setItem(tasks_obj.time, JSON.stringify(tasks_obj.tasks_info));
+  // remove complete icon
   task.children[0].remove();
 
-  completed_amount++;
-  completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
+  completed_amount_tasks++;
+  completed_tasks.innerText = `${completed_amount_tasks}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
 
 const display_task = (task) => {
@@ -419,7 +418,7 @@ const cancel_task_menu = () => {
 
   task_title.value = "";
   task_desc.value = "";
-  creating = false;
+  isCreating = false;
 };
 
 const cancel_editing = () => {
@@ -429,5 +428,5 @@ const cancel_editing = () => {
   task_menu.remove();
   task.classList.remove("current-editing-task");
 
-  editing = false;
+  isEditing = false;
 };
