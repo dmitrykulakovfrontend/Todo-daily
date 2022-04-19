@@ -14,13 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ".time-navigation-list > .nav-link"
   );
   const tasks = document.querySelectorAll(".task");
-  const add_task_button = document.querySelector(".add-task");
-  const agree_creating_button = document.querySelector(
-    ".tasks > .task-menu-div .agree"
-  );
-  const decline_creating_button = document.querySelector(
-    ".tasks > .task-menu-div .decline"
-  );
+  const add_task_button = $(".add-task");
+  const agree_creating_button = $(".tasks > .task-menu-div .agree");
+  const decline_creating_button = $(".tasks > .task-menu-div .decline");
 
   for (let task of tasks) {
     task.addEventListener("click", task_interaction);
@@ -38,8 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const uuid = () => Date.now().toString(36) + Math.random().toString(36);
 
+const $ = (str) => document.querySelector(str);
+
 const toggle_profile_popup = () => {
-  const profile_popup = document.querySelector(".profile-popup");
+  const profile_popup = $(".profile-popup");
 
   profile_popup.classList.toggle("active");
 };
@@ -56,7 +54,7 @@ const toggle_active_page = (e) => {
   );
   // get pages name
   const next_page = e.currentTarget.querySelector("span");
-  const current_page = document.querySelector(".current-page");
+  const current_page = $(".current-page");
 
   if (next_page.innerText === current_page.innerText) return;
 
@@ -81,41 +79,48 @@ const toggle_active_page = (e) => {
 };
 
 const task_interaction = (e) => {
-  const target = e.target;
-  console.log(target);
-  console.log(target.parentElement);
+  const click = e.target;
+  const currentTask = {};
+  currentTask.task = e.currentTarget;
+  currentTask.task_id = currentTask.task.dataset.id;
+  currentTask.tasks_obj = get_tasks();
+  currentTask.task_index = currentTask.tasks_obj.tasks_info.tasks.findIndex(
+    (task) => task.id === currentTask.task_id
+  );
 
-  if (target.classList.contains("fa-ellipsis")) {
+  if (click.classList.contains("fa-ellipsis")) {
     toggle_ellipsis_popup(e);
   }
 
   if (
-    target.parentElement.classList.contains("delete") ||
-    target.classList.contains("delete")
+    click.parentElement.classList.contains("delete") ||
+    click.classList.contains("delete")
   ) {
-    delete_task(e);
+    delete_task(currentTask);
   }
 
-  if (target.classList.contains("fa-pen-to-square")) {
-    edit_task(e);
+  if (click.classList.contains("fa-pen-to-square")) {
+    edit_task(currentTask);
   }
 
-  if (target.classList.contains("fa-circle-check")) {
-    complete_task(e);
+  if (click.classList.contains("fa-circle-check")) {
+    complete_task(currentTask);
   }
 };
 
 const load_upcoming_page = () => {
-  const current_page = document.querySelector(".current-page");
-  const current_time = document.querySelector(".current-time");
-  const days_list = document.querySelector(".days-list");
+  const current_page = $(".current-page");
+  const current_time = $(".current-time");
+  const tasks_list = $(".tasks-list");
+  const days_list = $(".days-list");
   const one_day_ms = 86400000;
   const week_ms = one_day_ms * 7;
 
   let time = new Date(new Date() - week_ms);
 
-  document.querySelector(".days").style.display = "block";
+  $(".days").style.display = "block";
   days_list.innerHTML = "";
+  tasks_list.innerHTML = "";
 
   for (let i = 0; i < 15; i++) {
     let li = document.createElement("li");
@@ -131,11 +136,13 @@ const load_upcoming_page = () => {
 
   current_page.innerText = "Upcoming";
   current_time.innerText = new Date().toDateString();
+
+  load_day_tasks(current_time.innerText);
 };
 
 const change_active_day = (e) => {
   if (!e.target.classList.contains("day")) return;
-  const current_time = document.querySelector(".current-time");
+  const current_time = $(".current-time");
   const days = document.querySelectorAll(".day");
 
   for (const day of days) {
@@ -150,13 +157,13 @@ const change_active_day = (e) => {
 
 const load_day_tasks = (time) => {
   const tasks_obj = get_tasks(time);
-  const tasks_list = document.querySelector(".tasks-list");
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const current_page = document.querySelector(".current-page");
-  const current_time = document.querySelector(".current-time");
+  const tasks_list = $(".tasks-list");
+  const completed_tasks = $(".completed-tasks");
+  const current_page = $(".current-page");
+  const current_time = $(".current-time");
 
   if (current_page.innerText !== "Upcoming") {
-    document.querySelector(".days").style.display = "none";
+    $(".days").style.display = "none";
     current_page.innerText = "";
   }
   tasks_list.innerHTML = "";
@@ -174,11 +181,9 @@ const load_day_tasks = (time) => {
 
 const activate_task_menu = () => {
   if (editing) return;
-  const add_task_button = document.querySelector(".add-task");
-  const task_menu = document.querySelector(".tasks > .task-menu-div");
-  const agree_creating_button = document.querySelector(
-    ".tasks > .task-menu-div .agree"
-  );
+  const add_task_button = $(".add-task");
+  const task_menu = $(".tasks > .task-menu-div");
+  const agree_creating_button = $(".tasks > .task-menu-div .agree");
 
   add_task_button.style.display = "none";
   task_menu.style.display = "block";
@@ -188,12 +193,12 @@ const activate_task_menu = () => {
 
 const finish_task_form = () => {
   const id = uuid();
-  const add_task_button = document.querySelector(".add-task");
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const task_menu = document.querySelector(".tasks > .task-menu-div");
-  const task_title = document.querySelector(".new-task-title");
+  const add_task_button = $(".add-task");
+  const completed_tasks = $(".completed-tasks");
+  const task_menu = $(".tasks > .task-menu-div");
+  const task_title = $(".new-task-title");
 
-  let task_desc = document.querySelector(".new-task-description");
+  let task_desc = $(".new-task-description");
   let task_obj = get_tasks();
 
   const task = {
@@ -221,11 +226,11 @@ const finish_task_form = () => {
 };
 
 const finish_editing_form = (e) => {
-  const current_task = document.querySelector(".current-editing-task");
-  const task_menu = document.querySelector(".tasks-list > .task-menu-div");
-  const new_task_title = document.querySelector(".new-task-title");
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const new_task_desc = document.querySelector(".new-task-description");
+  const current_task = $(".current-editing-task");
+  const task_menu = $(".tasks-list > .task-menu-div");
+  const new_task_title = $(".new-task-title");
+  const completed_tasks = $(".completed-tasks");
+  const new_task_desc = $(".new-task-description");
   const task_id = current_task.dataset.id;
 
   if (!is_valid_task()) return;
@@ -257,15 +262,9 @@ const finish_editing_form = (e) => {
   editing = false;
 };
 
-const delete_task = (e) => {
+const delete_task = ({ task, tasks_obj, task_index }) => {
   if (editing) return;
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const task = e.currentTarget;
-  const task_id = task.dataset.id;
-  const tasks_obj = get_tasks();
-  const task_index = tasks_obj.tasks_info.tasks.findIndex(
-    (task) => task.id === task_id
-  );
+  const completed_tasks = $(".completed-tasks");
 
   tasks_obj.tasks_info.tasks.splice(task_index, 1);
 
@@ -277,11 +276,10 @@ const delete_task = (e) => {
   completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
 
-const edit_task = (e) => {
+const edit_task = ({ task }) => {
   if (editing) return;
   if (creating) return;
 
-  const task = e.currentTarget;
   const desc = task.querySelector(".task-description").innerText;
   const title = task.querySelector(".task-title").innerText;
 
@@ -307,27 +305,21 @@ const edit_task = (e) => {
   editing = true;
 };
 
-const complete_task = (e) => {
-  const completed_tasks = document.querySelector(".completed-tasks");
-  const task = e.currentTarget;
-  const task_id = task.dataset.id;
-  const task_obj = get_tasks();
-  const task_index = task_obj.tasks_info.tasks.findIndex(
-    (task) => task.id === task_id
-  );
+const complete_task = ({ task, tasks_obj, task_index }) => {
+  const completed_tasks = $(".completed-tasks");
 
   task.classList.add("completed");
-  task_obj.tasks_info.tasks[task_index].completed = true;
+  tasks_obj.tasks_info.tasks[task_index].completed = true;
 
-  localStorage.setItem(task_obj.time, JSON.stringify(task_obj.tasks_info));
-  e.target.remove();
+  localStorage.setItem(tasks_obj.time, JSON.stringify(tasks_obj.tasks_info));
+  task.children[0].remove();
 
   completed_amount++;
-  completed_tasks.innerText = `${completed_amount}/${task_obj.tasks_info.tasks.length} completed`;
+  completed_tasks.innerText = `${completed_amount}/${tasks_obj.tasks_info.tasks.length} completed`;
 };
 
 const display_task = (task) => {
-  const tasks_list = document.querySelector(".tasks-list");
+  const tasks_list = $(".tasks-list");
   const task_li = document.createElement("li");
   task_li.classList.add("task");
   if (task.completed) task_li.classList.add("completed");
@@ -366,15 +358,11 @@ const display_task = (task) => {
   tasks_list.append(task_li);
 };
 
-const get_tasks = (
-  time = document.querySelector(".current-time").innerText
-) => {
+const get_tasks = (time = $(".current-time").innerText) => {
   let tasks_obj = {
     tasks: [],
     order: 0,
   };
-
-  if (!time) throw new Error("no time for getting tasks");
 
   if (localStorage.getItem(time)) {
     tasks_obj = JSON.parse(localStorage.getItem(time));
@@ -391,7 +379,7 @@ const get_tasks = (
 };
 
 const update_task = (task_obj) => {
-  const task = document.querySelector(".current-editing-task");
+  const task = $(".current-editing-task");
   task.querySelector(".task-title").innerText = task_obj.title;
   task.querySelector(".task-description").innerText = task_obj.desc;
   if (task_obj.edited) {
@@ -403,11 +391,9 @@ const update_task = (task_obj) => {
 };
 
 const is_valid_task = () => {
-  const task_title = document.querySelector(".new-task-title");
-  const task_desc = document.querySelector(".new-task-description");
-  const previous_task_desc = document.querySelector(
-    ".new-task-description"
-  ).value;
+  const task_title = $(".new-task-title");
+  const task_desc = $(".new-task-description");
+  const previous_task_desc = $(".new-task-description").value;
 
   if (task_title.value.trim() === "" || task_desc.value.trim() === "") {
     task_desc.value = "Fields cant be empty.";
@@ -423,10 +409,10 @@ const is_valid_task = () => {
 };
 
 const cancel_task_menu = () => {
-  const add_task_button = document.querySelector(".add-task");
-  const task_menu = document.querySelector(".tasks > .task-menu-div");
-  const task_title = document.querySelector(".new-task-title");
-  const task_desc = document.querySelector(".new-task-description");
+  const add_task_button = $(".add-task");
+  const task_menu = $(".tasks > .task-menu-div");
+  const task_title = $(".new-task-title");
+  const task_desc = $(".new-task-description");
 
   add_task_button.style.display = "block";
   task_menu.style.display = "none";
@@ -437,8 +423,8 @@ const cancel_task_menu = () => {
 };
 
 const cancel_editing = () => {
-  const task_menu = document.querySelector(".task-menu-div");
-  const task = document.querySelector(".current-editing-task");
+  const task_menu = $(".task-menu-div");
+  const task = $(".current-editing-task");
 
   task_menu.remove();
   task.classList.remove("current-editing-task");
