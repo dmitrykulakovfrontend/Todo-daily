@@ -13,10 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nav_links = document.querySelectorAll(
     ".time-navigation-list > .nav-link"
   );
-  const ellipsis_icons = document.querySelectorAll(".fa-ellipsis");
-  const trash_can_icons = document.querySelectorAll(".delete");
-  const complete_task_icons = document.querySelectorAll(".complete-task-icon");
-  const edit_icons = document.querySelectorAll(".fa-pen-to-square");
+  const tasks = document.querySelectorAll(".task");
   const add_task_button = document.querySelector(".add-task");
   const agree_creating_button = document.querySelector(
     ".tasks > .task-menu-div .agree"
@@ -25,24 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
     ".tasks > .task-menu-div .decline"
   );
 
+  for (let task of tasks) {
+    task.addEventListener("click", task_interaction);
+  }
+
   for (let nav_link of nav_links) {
     nav_link.addEventListener("click", toggle_active_page);
-  }
-
-  for (let icon of ellipsis_icons) {
-    icon.addEventListener("click", toggle_ellipsis_popup);
-  }
-
-  for (let icon of trash_can_icons) {
-    icon.addEventListener("click", delete_task);
-  }
-
-  for (let icon of edit_icons) {
-    icon.addEventListener("click", edit_task);
-  }
-
-  for (let icon of complete_task_icons) {
-    icon.addEventListener("click", complete_task);
   }
 
   add_task_button.addEventListener("click", activate_task_menu);
@@ -92,6 +77,31 @@ const toggle_active_page = (e) => {
       break;
     default:
       throw new Error("something went wrong");
+  }
+};
+
+const task_interaction = (e) => {
+  const target = e.target;
+  console.log(target);
+  console.log(target.parentElement);
+
+  if (target.classList.contains("fa-ellipsis")) {
+    toggle_ellipsis_popup(e);
+  }
+
+  if (
+    target.parentElement.classList.contains("delete") ||
+    target.classList.contains("delete")
+  ) {
+    delete_task(e);
+  }
+
+  if (target.classList.contains("fa-pen-to-square")) {
+    edit_task(e);
+  }
+
+  if (target.classList.contains("fa-circle-check")) {
+    complete_task(e);
   }
 };
 
@@ -250,7 +260,7 @@ const finish_editing_form = (e) => {
 const delete_task = (e) => {
   if (editing) return;
   const completed_tasks = document.querySelector(".completed-tasks");
-  const task = e.currentTarget.parentElement.parentElement.parentElement;
+  const task = e.currentTarget;
   const task_id = task.dataset.id;
   const tasks_obj = get_tasks();
   const task_index = tasks_obj.tasks_info.tasks.findIndex(
@@ -271,7 +281,7 @@ const edit_task = (e) => {
   if (editing) return;
   if (creating) return;
 
-  const task = e.currentTarget.parentElement.parentElement.parentElement;
+  const task = e.currentTarget;
   const desc = task.querySelector(".task-description").innerText;
   const title = task.querySelector(".task-title").innerText;
 
@@ -299,7 +309,7 @@ const edit_task = (e) => {
 
 const complete_task = (e) => {
   const completed_tasks = document.querySelector(".completed-tasks");
-  const task = e.currentTarget.parentElement;
+  const task = e.currentTarget;
   const task_id = task.dataset.id;
   const task_obj = get_tasks();
   const task_index = task_obj.tasks_info.tasks.findIndex(
@@ -310,7 +320,7 @@ const complete_task = (e) => {
   task_obj.tasks_info.tasks[task_index].completed = true;
 
   localStorage.setItem(task_obj.time, JSON.stringify(task_obj.tasks_info));
-  e.currentTarget.remove();
+  e.target.remove();
 
   completed_amount++;
   completed_tasks.innerText = `${completed_amount}/${task_obj.tasks_info.tasks.length} completed`;
@@ -351,19 +361,7 @@ const display_task = (task) => {
   </div>
   </div>
   `;
-  task_li
-    .querySelector(".fa-ellipsis")
-    .addEventListener("click", toggle_ellipsis_popup);
-
-  task_li
-    .querySelector(".fa-pen-to-square")
-    .addEventListener("click", edit_task);
-
-  task_li.querySelector(".delete").addEventListener("click", delete_task);
-
-  task_li
-    .querySelector(".complete-task-icon")
-    ?.addEventListener("click", complete_task);
+  task_li.addEventListener("click", task_interaction);
 
   tasks_list.append(task_li);
 };
