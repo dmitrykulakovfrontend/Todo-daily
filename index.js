@@ -178,7 +178,7 @@ const load_day_tasks = (time) => {
 };
 
 const activate_task_menu = () => {
-  if (editing) return;
+  if (isEditing) return;
   const add_task_button = $(".add-task");
   const task_menu = $(".tasks > .task-menu-div");
   const agree_creating_button = $(".tasks > .task-menu-div .agree");
@@ -261,7 +261,7 @@ const finish_editing_form = (e) => {
 };
 
 const delete_task = ({ task, tasks_obj, task_index }) => {
-  if (editing) return;
+  if (isEditing) return;
   const completed_tasks = $(".completed-tasks");
 
   tasks_obj.tasks_info.tasks.splice(task_index, 1);
@@ -275,8 +275,8 @@ const delete_task = ({ task, tasks_obj, task_index }) => {
 };
 
 const edit_task = ({ task }) => {
-  if (editing) return;
-  if (creating) return;
+  if (isEditing) return;
+  if (isCreating) return;
 
   const desc = task.querySelector(".task-description").innerText;
   const title = task.querySelector(".task-title").innerText;
