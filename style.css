@@ -46,10 +46,6 @@ body {
     text-align: center;
   }
 
-  body .profile {
-    display: none;
-  }
-
   body .app-header ul {
     justify-content: center;
     align-items: center;
@@ -211,52 +207,6 @@ img {
   display: none;
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  position: relative;
-}
-
-.profile:hover {
-  cursor: pointer;
-}
-
-.profile-name {
-  color: white;
-  font-family: 'Roboto', sans-serif;
-}
-
-.profile-icon {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 50%;
-}
-
-.profile-popup {
-  display: none;
-}
-
-.profile-popup.active {
-  display: block;
-  position: absolute;
-  top: 130%;
-  width: 100%;
-  border: 1px solid #d7d7d7;
-  border-radius: 1rem;
-  box-shadow: 2px 2px 12px 2px rgba(0, 0, 0, 0.19);
-  z-index: 1;
-}
-
-.profile-popup.active div {
-  padding: 1rem;
-}
-
-.profile-popup.active div:last-child {
-  border-top: 1px solid #d7d7d7;
-  color:#FF4F5A;
-}
-
 .logo {
   display: flex;
   gap: 1rem;
@@ -279,18 +229,6 @@ img {
 
 .logo-white span {
   color: white;
-}
-
-.login {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  width: fit-content;
-}
-
-.login a{
-  font-size: 2rem;
-  font-weight: 600;
 }
 
 .content-wrapper {
@@ -432,6 +370,10 @@ img {
 
 .task-interaction i:hover {
   cursor: pointer;
+}
+
+.task-menu-div {
+  display: none;
 }
 
 .ellipsis-popup {
@@ -632,23 +574,6 @@ img {
   color: #737373;
 }
 
-.profiles img {
-  width: 10%;
-  border-radius: 50%;
-}
-
-.profiles > form > input {
-  display: block;
-  margin: 1rem;
-  border: 1px solid #ababab;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-}
-
-.profiles > button {
-  margin: 1rem;
-}
-
 .flex {
   display: flex;
 }
@@ -667,8 +592,4 @@ img {
 
 .small-text {
   font-size: 2.4rem;
-}
-
-.profiles, .days, .task-menu-div, .profiles-nav {
-  display: none;
 }
